@@ -5,18 +5,25 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/infra/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@faker-js/faker": "8.4.1",
     "@rocketseat/eslint-config": "^2.2.2",
     "@types/node": "^20.14.10",
+    "@types/supertest": "6.0.2",
     "eslint-plugin-vitest-globals": "^1.5.0",
+    "supertest": "7.0.0",
     "tsup": "^8.1.0",
     "tsx": "^4.16.2",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "unplugin-swc": "1.5.1",
+    "vite-tsconfig-paths": "4.3.2",
+    "vitest": "2.0.3"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
