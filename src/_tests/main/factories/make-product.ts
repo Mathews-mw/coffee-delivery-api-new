@@ -9,6 +9,7 @@ export function makeProduct(override: Partial<IProductsProps> = {}, id?: UniqueE
 			name: faker.commerce.productName(),
 			price: faker.number.float({ min: 8, max: 25, multipleOf: 0.2 }),
 			description: faker.commerce.productDescription(),
+			imageUrl: faker.internet.url(),
 			...override,
 		},
 		id

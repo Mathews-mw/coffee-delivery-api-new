@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import fastify from 'fastify';
 import { ZodError } from 'zod';
 import cors from '@fastify/cors';
+import multer from 'fastify-multer';
 
 import { env } from './env';
 import { routes } from './http/routes/index.routes';
@@ -14,6 +15,8 @@ app.register(cors, {
 	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
 	origin: ['*'],
 });
+
+app.register(multer.contentParser);
 
 app.register(routes, { prefix: '/api' });
 

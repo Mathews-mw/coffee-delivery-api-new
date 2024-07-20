@@ -1,7 +1,7 @@
 import { IUseCaseError } from '@/core/errors/IUseCaseError';
 
-export class ResourceNotfounError extends Error implements IUseCaseError {
+export class ResourceNotFoundError extends Error implements IUseCaseError {
 	constructor() {
-		super('Resource Not Found.');
+		super('Recurso não encontrado.');
 	}
 }

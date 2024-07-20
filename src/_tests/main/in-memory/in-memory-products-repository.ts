@@ -1,11 +1,16 @@
 import { IProductRepository, IProductResponse, IQuerySearch } from '@/domains/main/application/modules/products/repositories/IProductRepository';
 import { Product } from '@/domains/main/resources/entities/product';
+import { InMemoryProductsTagsRepository } from './in-memory-products-tags-repository';
 
 export class InMemoryProductsRepository implements IProductRepository {
 	public items: Product[] = [];
 
+	constructor(private productsTagsRepository: InMemoryProductsTagsRepository) {}
+
 	async create(product: Product): Promise<Product> {
 		this.items.push(product);
+
+		await this.productsTagsRepository.createMany(product.tags.getItems());
 
 		return product;
 	}
@@ -15,6 +20,9 @@ export class InMemoryProductsRepository implements IProductRepository {
 
 		this.items[productIndex] = product;
 
+		await this.productsTagsRepository.createMany(product.tags.getNewItems());
+		await this.productsTagsRepository.deleteMany(product.tags.getRemovedItems());
+
 		return product;
 	}
 
@@ -22,6 +30,8 @@ export class InMemoryProductsRepository implements IProductRepository {
 		const productIndex = this.items.findIndex((item) => item.id === product.id);
 
 		this.items.slice(productIndex, 1);
+
+		await this.productsTagsRepository.deleteManyByProductId(product.id.toString());
 	}
 
 	async findAll({ search, page, perPage }: IQuerySearch): Promise<IProductResponse> {

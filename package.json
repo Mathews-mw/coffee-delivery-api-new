@@ -29,6 +29,7 @@
     "@fastify/cors": "^9.0.1",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
+    "fastify-multer": "2.0.3",
     "install": "^0.13.0",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.8.0",
