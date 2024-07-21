@@ -45,10 +45,8 @@ export class CreateProductUseCase {
 			return failure(new NegativaValueNotAllowedError());
 		}
 
-		const imageFileName = `${imageFile.fileName}-${Date.now()}`;
-
 		const { url } = await this.uploader.upload({
-			fileName: imageFileName,
+			fileName: imageFile.fileName,
 			fileType: imageFile.contentType,
 			body: imageFile.body,
 		});

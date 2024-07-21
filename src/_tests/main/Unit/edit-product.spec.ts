@@ -1,5 +1,6 @@
 import { makeTag } from '../factories/make-tags';
 import { makeProduct } from '../factories/make-product';
+import { FakeUploader } from '../storage/fake-uploader';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { ProductTag } from '@/domains/main/resources/entities/product-tag';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
@@ -7,15 +8,17 @@ import { InMemoryProductsRepository } from '../in-memory/in-memory-products-repo
 import { InMemoryProductsTagsRepository } from '../in-memory/in-memory-products-tags-repository';
 import { EditProductUseCase } from '@/domains/main/application/modules/products/use-cases/edit-product-use-case';
 
+let fakeUploader: FakeUploader;
 let updateProductUseCase: EditProductUseCase;
 let productRepository: InMemoryProductsRepository;
 let productTagsRepository: InMemoryProductsTagsRepository;
 
-describe.skip('Edit Product Use Case', () => {
+describe('Edit Product Use Case', () => {
 	beforeEach(() => {
+		fakeUploader = new FakeUploader();
 		productTagsRepository = new InMemoryProductsTagsRepository();
 		productRepository = new InMemoryProductsRepository(productTagsRepository);
-		updateProductUseCase = new EditProductUseCase(productRepository, productTagsRepository);
+		updateProductUseCase = new EditProductUseCase(fakeUploader, productRepository, productTagsRepository);
 	});
 
 	test('Should be able to edit an existing product', async () => {
@@ -23,7 +26,7 @@ describe.skip('Edit Product Use Case', () => {
 		const tag2 = makeTag({ tagName: 'GELADO' }, new UniqueEntityId('2'));
 		const tag3 = makeTag({ tagName: 'ESPECIAL' }, new UniqueEntityId('3'));
 
-		const product = makeProduct();
+		const product = makeProduct({ imageUrl: 'sample.png' });
 
 		productRepository.create(product);
 
@@ -32,11 +35,22 @@ describe.skip('Edit Product Use Case', () => {
 			ProductTag.create({ productId: product.id, tagId: tag2.id })
 		);
 
+		fakeUploader.uploads.push({
+			fileName: 'sample.png',
+			url: `sample.png-${Date.now()}`,
+		});
+
 		const result = await updateProductUseCase.execute({
 			productId: product.id.toString(),
 			name: 'Expresso Cremoso',
 			price: 9.5,
 			tagsId: ['1', '3'],
+			imageFile: {
+				body: Buffer.from(''),
+				contentType: 'image/png',
+				fileName: 'another-sample.png',
+				fileSize: 328,
+			},
 		});
 
 		expect(result.isSuccess()).toBe(true);
@@ -45,6 +59,7 @@ describe.skip('Edit Product Use Case', () => {
 			expect.objectContaining({
 				name: 'Expresso Cremoso',
 				price: 9.5,
+				imageUrl: fakeUploader.uploads[0].url,
 			})
 		);
 		expect(productRepository.items[0].tags.currentItems).toHaveLength(2);

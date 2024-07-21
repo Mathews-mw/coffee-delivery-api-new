@@ -1,13 +1,13 @@
 import { IUploader, IUploadParams } from '@/domains/main/application/storage/IUploader';
 import { randomUUID } from 'node:crypto';
 
-interface IUpload {
+export interface IUploadProps {
 	fileName: string;
 	url: string;
 }
 
 export class FakeUploader implements IUploader {
-	public uploads: IUpload[] = [];
+	public uploads: IUploadProps[] = [];
 
 	async upload({ fileName }: IUploadParams): Promise<{ url: string }> {
 		const url = randomUUID();

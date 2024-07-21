@@ -78,10 +78,8 @@ export class EditProductUseCase {
 		if (imageFile) {
 			await this.uploader.delete(product.imageUrl);
 
-			const imageFileName = `${imageFile.fileName}-${Date.now()}`;
-
 			const { url } = await this.uploader.upload({
-				fileName: imageFileName,
+				fileName: imageFile.fileName,
 				fileType: imageFile.contentType,
 				body: imageFile.body,
 			});
