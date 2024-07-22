@@ -1,8 +1,16 @@
 import { Customer } from '@/domains/main/resources/entities/customer';
 import { ICustomerRepository, ICustomerResponse, IQuerySearch } from '@/domains/main/application/modules/accounts/repositories/ICustomerRepository';
+import { InMemoryUsersRepository } from './in-memory-users-repository';
+import { InMemoryRegistrationsRepository } from './in-memory-registrations-repository';
+import { CustomerDetails } from '@/domains/main/resources/entities/value-objects/customer-details';
 
 export class InMemoryCustomersRepository implements ICustomerRepository {
 	public items: Customer[] = [];
+
+	constructor(
+		private usersRepository: InMemoryUsersRepository,
+		private registrationRepository: InMemoryRegistrationsRepository
+	) {}
 
 	async create(customer: Customer): Promise<Customer> {
 		this.items.push(customer);
@@ -43,14 +51,29 @@ export class InMemoryCustomersRepository implements ICustomerRepository {
 		};
 	}
 
-	async findById(id: string): Promise<Customer | null> {
+	async findById(id: string) {
 		const customer = this.items.find((item) => item.id.toString() === id);
 
 		if (!customer) {
 			return null;
 		}
 
-		return customer;
+		const user = await this.usersRepository.findById(customer.userId.toString());
+		const registration = await this.registrationRepository.findById(customer.registrationId.toString());
+
+		if (!user || !registration) {
+			return null;
+		}
+
+		const customerDetails = {
+			id: customer.id,
+			userId: customer.userId,
+			registrationId: customer.registrationId,
+			user,
+			registration,
+		} as CustomerDetails;
+
+		return customerDetails;
 	}
 
 	async findByUserId(userId: string): Promise<Customer | null> {

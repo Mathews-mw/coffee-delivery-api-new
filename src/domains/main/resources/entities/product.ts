@@ -3,7 +3,7 @@ import { Optional } from '@/core/types/optional';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { ProductTagList } from './product-tag-list';
 
-export interface IProductsProps {
+export interface IProductProps {
 	name: string;
 	price: number;
 	description: string;
@@ -14,7 +14,7 @@ export interface IProductsProps {
 	updatedAt?: Date;
 }
 
-export class Product extends Entity<IProductsProps> {
+export class Product extends Entity<IProductProps> {
 	get name() {
 		return this.props.name;
 	}
@@ -81,7 +81,7 @@ export class Product extends Entity<IProductsProps> {
 		this.props.updatedAt = new Date();
 	}
 
-	static create(props: Optional<IProductsProps, 'available' | 'tags' | 'createdAt' | 'updatedAt'>, id?: UniqueEntityId) {
+	static create(props: Optional<IProductProps, 'available' | 'tags' | 'createdAt' | 'updatedAt'>, id?: UniqueEntityId) {
 		const product = new Product(
 			{
 				available: props.available ?? true,

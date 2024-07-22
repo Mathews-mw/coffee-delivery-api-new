@@ -1,8 +1,8 @@
+import { makeUser } from '../factories/make-user';
 import { InMemoryUsersRepository } from '../in-memory/in-memory-users-repository';
 import { InMemoryCustomersRepository } from '../in-memory/in-memory-customers-repository';
 import { InMemoryRegistrationsRepository } from '../in-memory/in-memory-registrations-repository';
 import { CreateCustomerUseCase } from '@/domains/main/application/modules/accounts/use-cases/create-customer-use-case';
-import { makeUser } from '../factories/make-user';
 
 let usersRepository: InMemoryUsersRepository;
 let createCustomerUseCase: CreateCustomerUseCase;
@@ -12,8 +12,8 @@ let registrationsRepository: InMemoryRegistrationsRepository;
 describe('Create Customer Use Case', () => {
 	beforeAll(() => {
 		usersRepository = new InMemoryUsersRepository();
-		customerRepository = new InMemoryCustomersRepository();
 		registrationsRepository = new InMemoryRegistrationsRepository();
+		customerRepository = new InMemoryCustomersRepository(usersRepository, registrationsRepository);
 		createCustomerUseCase = new CreateCustomerUseCase(usersRepository, customerRepository, registrationsRepository);
 	});
 
