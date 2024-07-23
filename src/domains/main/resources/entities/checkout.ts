@@ -9,7 +9,7 @@ export type CheckoutStatusType = (typeof checkoutStatusType)[number];
 export interface ICheckoutProps {
 	productId: UniqueEntityId;
 	customerId: UniqueEntityId;
-	orderId?: UniqueEntityId;
+	orderId?: UniqueEntityId | null;
 	status: CheckoutStatusType;
 	createdAt: Date;
 }
@@ -23,7 +23,7 @@ export class Checkout extends Entity<ICheckoutProps> {
 		return this.props.customerId;
 	}
 
-	get orderId(): UniqueEntityId | undefined {
+	get orderId(): UniqueEntityId | null | undefined {
 		return this.props.orderId;
 	}
 

@@ -9,11 +9,11 @@ export type UserRoleType = (typeof userRolesTypes)[number];
 export interface IUserProps {
 	name: string;
 	email: string;
-	password?: string;
+	password?: string | null;
 	role: UserRoleType;
 	isActive: boolean;
 	createdAt: Date;
-	updatedAt?: Date;
+	updatedAt?: Date | null;
 }
 
 export class User extends Entity<IUserProps> {
@@ -35,7 +35,7 @@ export class User extends Entity<IUserProps> {
 		this.touch();
 	}
 
-	get password(): string | undefined {
+	get password(): string | null | undefined {
 		return this.props.password;
 	}
 

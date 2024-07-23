@@ -11,7 +11,7 @@ export interface IProductProps {
 	available: boolean;
 	tags: ProductTagList;
 	createdAt: Date;
-	updatedAt?: Date;
+	updatedAt?: Date | null;
 }
 
 export class Product extends Entity<IProductProps> {

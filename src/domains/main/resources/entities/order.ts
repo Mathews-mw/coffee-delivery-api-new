@@ -14,16 +14,16 @@ export interface IOrderProps {
 	cpf: string;
 	street: string;
 	number: string;
-	complement?: string;
+	complement?: string | null;
 	district: string;
 	city: string;
 	estate: string;
-	cep?: string;
+	cep?: string | null;
 	paymentType: OrderPaymentType;
 	totalCost: number;
 	status: OrderStatusType;
 	createdAt: Date;
-	updatedAt?: Date;
+	updatedAt?: Date | null;
 }
 
 export class Order extends Entity<IOrderProps> {
@@ -67,7 +67,7 @@ export class Order extends Entity<IOrderProps> {
 		this.touch();
 	}
 
-	get complement(): string | undefined {
+	get complement(): string | undefined | null {
 		return this.props.complement;
 	}
 
@@ -103,7 +103,7 @@ export class Order extends Entity<IOrderProps> {
 		this.touch();
 	}
 
-	get cep(): string | undefined {
+	get cep(): string | undefined | null {
 		return this.props.cep;
 	}
 

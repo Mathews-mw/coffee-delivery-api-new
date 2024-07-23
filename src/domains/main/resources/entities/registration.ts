@@ -7,11 +7,11 @@ export interface IRegistrationProps {
 	cpf: string;
 	street: string;
 	number: string;
-	complement?: string;
+	complement?: string | null;
 	district: string;
 	city: string;
 	estate: string;
-	cep?: string;
+	cep?: string | null;
 }
 
 export class Registration extends Entity<IRegistrationProps> {
@@ -47,7 +47,7 @@ export class Registration extends Entity<IRegistrationProps> {
 		this.props.number = number;
 	}
 
-	get complement(): string | undefined {
+	get complement(): string | undefined | null {
 		return this.props.complement;
 	}
 
@@ -79,7 +79,7 @@ export class Registration extends Entity<IRegistrationProps> {
 		this.props.estate = estate;
 	}
 
-	get cep(): string | undefined {
+	get cep(): string | undefined | null {
 		return this.props.cep;
 	}
 

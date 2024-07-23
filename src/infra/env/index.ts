@@ -7,6 +7,8 @@ const envSchema = z.object({
 	NODE_ENV: z.enum(['dev', 'qas', 'production']).default('dev'),
 	PORT: z.coerce.number().default(3737),
 	HOST: z.string(),
+	DATABASE_URL: z.string(),
+	COOKIE_NAME: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);

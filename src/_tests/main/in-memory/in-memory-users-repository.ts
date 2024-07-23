@@ -1,5 +1,5 @@
 import { User } from '@/domains/main/resources/entities/user';
-import { IQuerySearch, IUserRepository, IUserResponse } from '@/domains/main/application/modules/accounts/repositories/IUserRepository';
+import { IUserQuerySearch, IUserRepository, IUserResponse } from '@/domains/main/application/modules/accounts/repositories/IUserRepository';
 
 export class InMemoryUsersRepository implements IUserRepository {
 	public items: User[] = [];
@@ -24,7 +24,7 @@ export class InMemoryUsersRepository implements IUserRepository {
 		this.items.slice(userIndex, 1);
 	}
 
-	async findAll({ page, perPage, search }: IQuerySearch): Promise<IUserResponse> {
+	async findAll({ page, perPage, search }: IUserQuerySearch): Promise<IUserResponse> {
 		const usersPaginated = this.items
 			.filter((item) => (search ? item.name.toLowerCase().includes(search.toLocaleLowerCase()) : item))
 			.slice((page - 1) * perPage, page * perPage);
