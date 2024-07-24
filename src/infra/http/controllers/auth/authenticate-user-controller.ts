@@ -29,7 +29,7 @@ export async function authenticateUserController(request: FastifyRequest, reply:
 
 		const { user } = authResult.value;
 
-		const token = await reply.jwtSign({}, { sign: { sub: user.id.toString() } });
+		const token = await reply.jwtSign({ role: user.role }, { sign: { sub: user.id.toString() } });
 
 		const sessionResult = await sessionService.execute({
 			userId: user.id.toString(),

@@ -6,17 +6,21 @@ import { InMemoryUsersRepository } from '../in-memory/in-memory-users-repository
 import { InMemoryProductsRepository } from '../in-memory/in-memory-products-repository';
 import { InMemoryCustomersRepository } from '../in-memory/in-memory-customers-repository';
 import { InMemoryCheckoutsRepository } from '../in-memory/in-memory-checkouts-repository';
+import { InMemoryAttachmentsRepository } from '../in-memory/in-memory-attachments-repository';
 import { InMemoryProductsTagsRepository } from '../in-memory/in-memory-products-tags-repository';
 import { InMemoryRegistrationsRepository } from '../in-memory/in-memory-registrations-repository';
 import { CreateCheckoutUseCase } from '@/domains/main/application/modules/orders/use-cases/create-checkout';
+import { InMemoryProductAttachmentRepository } from '../in-memory/in-memory-product-attachments-repository';
 
 let usersRepository: InMemoryUsersRepository;
 let createCheckoutUseCase: CreateCheckoutUseCase;
 let productsRepository: InMemoryProductsRepository;
 let checkoutsRepository: InMemoryCheckoutsRepository;
 let customersRepository: InMemoryCustomersRepository;
+let attachmentRepository: InMemoryAttachmentsRepository;
 let productsTagsRepository: InMemoryProductsTagsRepository;
 let registrationRepository: InMemoryRegistrationsRepository;
+let productAttachmentsRepository: InMemoryProductAttachmentRepository;
 
 describe('Create Checkout Use Case', () => {
 	beforeEach(() => {
@@ -24,7 +28,9 @@ describe('Create Checkout Use Case', () => {
 		checkoutsRepository = new InMemoryCheckoutsRepository();
 		productsTagsRepository = new InMemoryProductsTagsRepository();
 		registrationRepository = new InMemoryRegistrationsRepository();
-		productsRepository = new InMemoryProductsRepository(productsTagsRepository);
+		attachmentRepository = new InMemoryAttachmentsRepository();
+		productAttachmentsRepository = new InMemoryProductAttachmentRepository();
+		productsRepository = new InMemoryProductsRepository(productsTagsRepository, attachmentRepository, productAttachmentsRepository);
 		customersRepository = new InMemoryCustomersRepository(usersRepository, registrationRepository);
 		createCheckoutUseCase = new CreateCheckoutUseCase(customersRepository, checkoutsRepository);
 	});

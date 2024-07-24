@@ -1,15 +1,16 @@
 import { Entity } from '@/core/entities/entity';
 import { Optional } from '@/core/types/optional';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { ProductTagList } from './product-tag-list';
+import { ProductAttachmentList } from './product-attachment-list';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 
 export interface IProductProps {
 	name: string;
 	price: number;
 	description: string;
-	imageUrl: string;
 	available: boolean;
 	tags: ProductTagList;
+	image: ProductAttachmentList;
 	createdAt: Date;
 	updatedAt?: Date | null;
 }
@@ -42,15 +43,6 @@ export class Product extends Entity<IProductProps> {
 		this.touch();
 	}
 
-	get imageUrl() {
-		return this.props.imageUrl;
-	}
-
-	set imageUrl(imageUrl: string) {
-		this.props.imageUrl = imageUrl;
-		this.touch();
-	}
-
 	get available() {
 		return this.props.available;
 	}
@@ -69,6 +61,15 @@ export class Product extends Entity<IProductProps> {
 		this.touch();
 	}
 
+	get image() {
+		return this.props.image;
+	}
+
+	set image(image: ProductAttachmentList) {
+		this.props.image = image;
+		this.touch();
+	}
+
 	get createdAt() {
 		return this.props.createdAt;
 	}
@@ -81,11 +82,12 @@ export class Product extends Entity<IProductProps> {
 		this.props.updatedAt = new Date();
 	}
 
-	static create(props: Optional<IProductProps, 'available' | 'tags' | 'createdAt' | 'updatedAt'>, id?: UniqueEntityId) {
+	static create(props: Optional<IProductProps, 'available' | 'tags' | 'image' | 'createdAt' | 'updatedAt'>, id?: UniqueEntityId) {
 		const product = new Product(
 			{
 				available: props.available ?? true,
 				tags: props.tags ?? new ProductTagList(),
+				image: props.image ?? new ProductAttachmentList(),
 				createdAt: new Date(),
 				...props,
 			},

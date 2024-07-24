@@ -3,21 +3,28 @@ import { makeProduct } from '../factories/make-product';
 import { FakeUploader } from '../storage/fake-uploader';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { InMemoryProductsRepository } from '../in-memory/in-memory-products-repository';
+import { InMemoryAttachmentsRepository } from '../in-memory/in-memory-attachments-repository';
 import { InMemoryProductsTagsRepository } from '../in-memory/in-memory-products-tags-repository';
+import { InMemoryProductAttachmentRepository } from '../in-memory/in-memory-product-attachments-repository';
 import { CreateProductUseCase } from '@/domains/main/application/modules/products/use-cases/create-product-use-case';
 import { ProductAlreadyExistsError } from '@/domains/main/application/modules/products/use-cases/errors/product-already-exists-error';
 import { NegativaValueNotAllowedError } from '@/domains/main/application/modules/products/use-cases/errors/negative-value-not-allowed-error';
+import { makeAttachment } from '../factories/make-attachment';
 
 let fakeUploader: FakeUploader;
 let createProductUseCase: CreateProductUseCase;
 let productRepository: InMemoryProductsRepository;
+let attachmentRepository: InMemoryAttachmentsRepository;
 let productTagsRepository: InMemoryProductsTagsRepository;
+let productAttachmentsRepository: InMemoryProductAttachmentRepository;
 
 describe('Create Product Use Case', () => {
 	beforeEach(() => {
 		fakeUploader = new FakeUploader();
 		productTagsRepository = new InMemoryProductsTagsRepository();
-		productRepository = new InMemoryProductsRepository(productTagsRepository);
+		attachmentRepository = new InMemoryAttachmentsRepository();
+		productAttachmentsRepository = new InMemoryProductAttachmentRepository();
+		productRepository = new InMemoryProductsRepository(productTagsRepository, attachmentRepository, productAttachmentsRepository);
 		createProductUseCase = new CreateProductUseCase(fakeUploader, productRepository);
 	});
 
@@ -31,6 +38,7 @@ describe('Create Product Use Case', () => {
 			description: 'O tradicional café feito com água quente e grãos moídos',
 			price: 9.9,
 			tagsId: ['1', '2'],
+			attachmentId: '1',
 			imageFile: {
 				body: Buffer.from(''),
 				contentType: 'image/png',
@@ -62,6 +70,7 @@ describe('Create Product Use Case', () => {
 			description: 'O tradicional café feito com água quente e grãos moídos',
 			price: 9.9,
 			tagsId: ['1'],
+			attachmentId: '1',
 			imageFile: {
 				body: Buffer.from(''),
 				contentType: 'image/png',
@@ -80,6 +89,7 @@ describe('Create Product Use Case', () => {
 			description: 'O tradicional café feito com água quente e grãos moídos',
 			price: -9.9,
 			tagsId: ['1'],
+			attachmentId: '1',
 			imageFile: {
 				body: Buffer.from(''),
 				contentType: 'image/png',

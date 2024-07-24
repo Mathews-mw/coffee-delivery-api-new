@@ -8,7 +8,7 @@ import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
 import { ProductAlreadyExistsError } from './errors/product-already-exists-error';
 import { ProductTagList } from '@/domains/main/resources/entities/product-tag-list';
 import { NegativaValueNotAllowedError } from './errors/negative-value-not-allowed-error';
-import { IProductTagRepository } from '../../products-tags/repositories/product-tag-repository';
+import { IProductTagRepository } from '../../tag/repositories/IProductTagRepository';
 
 interface IUseCaseRequest {
 	productId: string;

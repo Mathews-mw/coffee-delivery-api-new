@@ -6,7 +6,8 @@ declare module 'fastify' {
 		file: File;
 		files: File[];
 		user: {
-			userId: string;
+			sub: string;
+			role: 'ADMIN' | 'EMPLOYEE' | 'CUSTOMER';
 		};
 	}
 }

@@ -5,19 +5,25 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { ProductTag } from '@/domains/main/resources/entities/product-tag';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
 import { InMemoryProductsRepository } from '../in-memory/in-memory-products-repository';
+import { InMemoryAttachmentsRepository } from '../in-memory/in-memory-attachments-repository';
 import { InMemoryProductsTagsRepository } from '../in-memory/in-memory-products-tags-repository';
+import { InMemoryProductAttachmentRepository } from '../in-memory/in-memory-product-attachments-repository';
 import { EditProductUseCase } from '@/domains/main/application/modules/products/use-cases/edit-product-use-case';
 
 let fakeUploader: FakeUploader;
 let updateProductUseCase: EditProductUseCase;
 let productRepository: InMemoryProductsRepository;
+let attachmentRepository: InMemoryAttachmentsRepository;
 let productTagsRepository: InMemoryProductsTagsRepository;
+let productAttachmentsRepository: InMemoryProductAttachmentRepository;
 
 describe('Edit Product Use Case', () => {
 	beforeEach(() => {
 		fakeUploader = new FakeUploader();
 		productTagsRepository = new InMemoryProductsTagsRepository();
-		productRepository = new InMemoryProductsRepository(productTagsRepository);
+		attachmentRepository = new InMemoryAttachmentsRepository();
+		productAttachmentsRepository = new InMemoryProductAttachmentRepository();
+		productRepository = new InMemoryProductsRepository(productTagsRepository, attachmentRepository, productAttachmentsRepository);
 		updateProductUseCase = new EditProductUseCase(fakeUploader, productRepository, productTagsRepository);
 	});
 

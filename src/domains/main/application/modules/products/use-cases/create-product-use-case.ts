@@ -1,3 +1,4 @@
+import { IUploader } from '../../../storage/IUploader';
 import { failure, Outcome, success } from '@/core/outcome';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Product } from '@/domains/main/resources/entities/product';
@@ -6,13 +7,15 @@ import { ProductTag } from '@/domains/main/resources/entities/product-tag';
 import { ProductAlreadyExistsError } from './errors/product-already-exists-error';
 import { ProductTagList } from '@/domains/main/resources/entities/product-tag-list';
 import { NegativaValueNotAllowedError } from './errors/negative-value-not-allowed-error';
-import { IUploader } from '../../../storage/IUploader';
+import { ProductAttachmentList } from '@/domains/main/resources/entities/product-attachment-list';
+import { ProductAttachment } from '@/domains/main/resources/entities/product-attachment';
 
 interface IUseCaseRequest {
 	name: string;
 	price: number;
 	description: string;
 	tagsId: Array<string>;
+	attachmentId: string;
 	imageFile: {
 		fileName: string;
 		fileSize: number;
@@ -34,7 +37,7 @@ export class CreateProductUseCase {
 		private productsRepository: IProductRepository
 	) {}
 
-	async execute({ name, price, description, tagsId, imageFile }: IUseCaseRequest): Promise<IUseCaseResponse> {
+	async execute({ name, price, description, tagsId, attachmentId, imageFile }: IUseCaseRequest): Promise<IUseCaseResponse> {
 		const productByName = await this.productsRepository.findByName(name);
 
 		if (productByName) {
@@ -55,7 +58,6 @@ export class CreateProductUseCase {
 			name,
 			price,
 			description,
-			imageUrl: url,
 		});
 
 		const productTags = tagsId.map((tagId) => {
@@ -65,7 +67,13 @@ export class CreateProductUseCase {
 			});
 		});
 
+		const productAttachment = ProductAttachment.create({
+			productId: newProduct.id,
+			attachmentId: new UniqueEntityId(attachmentId),
+		});
+
 		newProduct.tags = new ProductTagList(productTags);
+		newProduct.image = new ProductAttachmentList([productAttachment]);
 
 		await this.productsRepository.create(newProduct);
 

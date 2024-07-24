@@ -1,5 +1,5 @@
 import { ProductTag } from '@/domains/main/resources/entities/product-tag';
-import { IProductTagRepository } from '@/domains/main/application/modules/products-tags/repositories/product-tag-repository';
+import { IProductTagRepository } from '@/domains/main/application/modules/tag/repositories/IProductTagRepository';
 
 export class InMemoryProductsTagsRepository implements IProductTagRepository {
 	public items: ProductTag[] = [];
