@@ -1,4 +1,6 @@
-import { IUploader } from '../../../storage/IUploader';
+import { inject, injectable } from 'tsyringe';
+
+import containerKeys from '@/config/container-keys.config';
 import { failure, Outcome, success } from '@/core/outcome';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Product } from '@/domains/main/resources/entities/product';
@@ -7,8 +9,8 @@ import { ProductTag } from '@/domains/main/resources/entities/product-tag';
 import { ProductAlreadyExistsError } from './errors/product-already-exists-error';
 import { ProductTagList } from '@/domains/main/resources/entities/product-tag-list';
 import { NegativaValueNotAllowedError } from './errors/negative-value-not-allowed-error';
-import { ProductAttachmentList } from '@/domains/main/resources/entities/product-attachment-list';
 import { ProductAttachment } from '@/domains/main/resources/entities/product-attachment';
+import { ProductAttachmentList } from '@/domains/main/resources/entities/product-attachment-list';
 
 interface IUseCaseRequest {
 	name: string;
@@ -16,12 +18,6 @@ interface IUseCaseRequest {
 	description: string;
 	tagsId: Array<string>;
 	attachmentId: string;
-	imageFile: {
-		fileName: string;
-		fileSize: number;
-		contentType: string;
-		body: Buffer;
-	};
 }
 
 type IUseCaseResponse = Outcome<
@@ -31,13 +27,11 @@ type IUseCaseResponse = Outcome<
 	}
 >;
 
+@injectable()
 export class CreateProductUseCase {
-	constructor(
-		private uploader: IUploader,
-		private productsRepository: IProductRepository
-	) {}
+	constructor(@inject(containerKeys.repositories.products_repository) private productsRepository: IProductRepository) {}
 
-	async execute({ name, price, description, tagsId, attachmentId, imageFile }: IUseCaseRequest): Promise<IUseCaseResponse> {
+	async execute({ name, price, description, tagsId, attachmentId }: IUseCaseRequest): Promise<IUseCaseResponse> {
 		const productByName = await this.productsRepository.findByName(name);
 
 		if (productByName) {
@@ -47,12 +41,6 @@ export class CreateProductUseCase {
 		if (price <= 0) {
 			return failure(new NegativaValueNotAllowedError());
 		}
-
-		const { url } = await this.uploader.upload({
-			fileName: imageFile.fileName,
-			fileType: imageFile.contentType,
-			body: imageFile.body,
-		});
 
 		const newProduct = Product.create({
 			name,

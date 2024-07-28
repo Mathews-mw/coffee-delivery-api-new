@@ -9,23 +9,24 @@ import { InMemoryProductAttachmentRepository } from '../in-memory/in-memory-prod
 import { CreateProductUseCase } from '@/domains/main/application/modules/products/use-cases/create-product-use-case';
 import { ProductAlreadyExistsError } from '@/domains/main/application/modules/products/use-cases/errors/product-already-exists-error';
 import { NegativaValueNotAllowedError } from '@/domains/main/application/modules/products/use-cases/errors/negative-value-not-allowed-error';
-import { makeAttachment } from '../factories/make-attachment';
 
-let fakeUploader: FakeUploader;
+let uploader: FakeUploader;
 let createProductUseCase: CreateProductUseCase;
 let productRepository: InMemoryProductsRepository;
 let attachmentRepository: InMemoryAttachmentsRepository;
+let attachmentsRepository: InMemoryAttachmentsRepository;
 let productTagsRepository: InMemoryProductsTagsRepository;
 let productAttachmentsRepository: InMemoryProductAttachmentRepository;
 
 describe('Create Product Use Case', () => {
 	beforeEach(() => {
-		fakeUploader = new FakeUploader();
-		productTagsRepository = new InMemoryProductsTagsRepository();
+		uploader = new FakeUploader();
 		attachmentRepository = new InMemoryAttachmentsRepository();
-		productAttachmentsRepository = new InMemoryProductAttachmentRepository();
+		attachmentsRepository = new InMemoryAttachmentsRepository();
+		productTagsRepository = new InMemoryProductsTagsRepository();
+		productAttachmentsRepository = new InMemoryProductAttachmentRepository(uploader, attachmentsRepository);
 		productRepository = new InMemoryProductsRepository(productTagsRepository, attachmentRepository, productAttachmentsRepository);
-		createProductUseCase = new CreateProductUseCase(fakeUploader, productRepository);
+		createProductUseCase = new CreateProductUseCase(productRepository);
 	});
 
 	test('Should be able to create a new product with tags', async () => {
@@ -39,12 +40,6 @@ describe('Create Product Use Case', () => {
 			price: 9.9,
 			tagsId: ['1', '2'],
 			attachmentId: '1',
-			imageFile: {
-				body: Buffer.from(''),
-				contentType: 'image/png',
-				fileName: 'sample.png',
-				fileSize: 328,
-			},
 		});
 
 		expect(result.isSuccess()).toBe(true);
@@ -71,12 +66,6 @@ describe('Create Product Use Case', () => {
 			price: 9.9,
 			tagsId: ['1'],
 			attachmentId: '1',
-			imageFile: {
-				body: Buffer.from(''),
-				contentType: 'image/png',
-				fileName: 'sample.png',
-				fileSize: 328,
-			},
 		});
 
 		expect(result.isFalse()).toBe(true);
@@ -90,12 +79,6 @@ describe('Create Product Use Case', () => {
 			price: -9.9,
 			tagsId: ['1'],
 			attachmentId: '1',
-			imageFile: {
-				body: Buffer.from(''),
-				contentType: 'image/png',
-				fileName: 'sample.png',
-				fileSize: 328,
-			},
 		});
 
 		expect(result.isFalse()).toBe(true);

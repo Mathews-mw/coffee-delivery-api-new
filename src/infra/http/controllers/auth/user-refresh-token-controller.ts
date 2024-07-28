@@ -31,7 +31,8 @@ export async function userRefreshTokenController(request: FastifyRequest, reply:
 			path: '/',
 			maxAge: 7 * 86400, // 7 days in seconds
 			httpOnly: true,
-			// sameSite: 'none',
+			secure: true,
+			sameSite: 'none',
 		})
 		.status(200)
 		.send({ token });

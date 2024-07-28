@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
-import { containersKeysMap } from '@/shared/containers';
+import containerKeys from '@/config/container-keys.config';
 import { failure, Outcome, success } from '@/core/outcome';
 import { User } from '@/domains/main/resources/entities/user';
 import { IUserRepository } from '../repositories/IUserRepository';
@@ -19,7 +19,7 @@ type IUseCaseResponse = Outcome<
 
 @injectable()
 export class GetUserDetailsUseCase {
-	constructor(@inject(containersKeysMap.users_repository) private usersRepository: IUserRepository) {}
+	constructor(@inject(containerKeys.repositories.users_repository) private usersRepository: IUserRepository) {}
 
 	async execute({ userId }: IUseCaseRequest): Promise<IUseCaseResponse> {
 		const user = await this.usersRepository.findById(userId);

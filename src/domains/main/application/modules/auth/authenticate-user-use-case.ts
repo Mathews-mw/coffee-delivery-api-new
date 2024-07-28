@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { inject, injectable } from 'tsyringe';
 
-import { containersKeysMap } from '@/shared/containers';
+import containerKeys from '@/config/container-keys.config';
 import { failure, Outcome, success } from '@/core/outcome';
 import { User } from '@/domains/main/resources/entities/user';
 import { WrongCredentialsError } from './errors/wrong-credentials-error';
@@ -23,8 +23,8 @@ type IResponse = Outcome<
 @injectable()
 export class AuthenticateUserUseCase {
 	constructor(
-		@inject(containersKeysMap.users_repository) private usersRepository: IUserRepository,
-		@inject(containersKeysMap.sessions_repository) private sessionsRepository: ISessionRepository
+		@inject(containerKeys.repositories.users_repository) private usersRepository: IUserRepository,
+		@inject(containerKeys.repositories.sessions_repository) private sessionsRepository: ISessionRepository
 	) {}
 
 	async execute({ email, password }: AuthenticateUserUseCaseRequest): Promise<IResponse> {

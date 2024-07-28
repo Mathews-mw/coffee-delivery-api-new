@@ -3,6 +3,7 @@ import { IPaginationParams, IPaginationResponse } from '@/core/interfaces/pagina
 
 export interface IQuerySearch extends IPaginationParams {
 	search?: string;
+	available?: boolean;
 }
 
 export interface IProductResponse {

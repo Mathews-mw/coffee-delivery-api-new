@@ -1,3 +1,6 @@
+import { inject, injectable } from 'tsyringe';
+
+import containerKeys from '@/config/container-keys.config';
 import { failure, Outcome, success } from '@/core/outcome';
 import { Tag } from '@/domains/main/resources/entities/tag';
 import { ITagRepository } from '../repositories/ITagRepository';
@@ -14,8 +17,9 @@ type IUseCaseResponse = Outcome<
 	}
 >;
 
+@injectable()
 export class CreateTagUseCase {
-	constructor(private tagsRepository: ITagRepository) {}
+	constructor(@inject(containerKeys.repositories.tags_repository) private tagsRepository: ITagRepository) {}
 
 	async execute({ tagName }: IUseCaseRequest): Promise<IUseCaseResponse> {
 		const tagByName = await this.tagsRepository.findByTagName(tagName);

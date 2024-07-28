@@ -7,4 +7,14 @@ export class InMemoryAttachmentsRepository implements IAttachmentRepository {
 	async create(attachment: Attachment): Promise<void> {
 		this.items.push(attachment);
 	}
+
+	async findById(id: string): Promise<Attachment | null> {
+		const attachment = this.items.find((item) => item.id.toString() === id);
+
+		if (!attachment) {
+			return null;
+		}
+
+		return attachment;
+	}
 }

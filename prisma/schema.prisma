@@ -39,3 +39,50 @@ model Session {
 
   @@map("sessions")
 }
+
+model Product {
+  id          String    @id @unique @default(uuid())
+  name        String    @unique
+  price       Float
+  description String
+  available   Boolean
+  imageUrl    String?   @map("image_url")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime? @map("updated_at")
+
+  attachment   Attachment?
+  productsTags ProductTag[]
+
+  @@map("products")
+}
+
+model Tag {
+  id      String @id @unique @default(uuid())
+  tagName String @unique @map("tag_name")
+
+  productsTags ProductTag[]
+
+  @@map("tags")
+}
+
+model ProductTag {
+  tagId     String @map("tag_id")
+  productId String @map("product_id")
+
+  tag     Tag     @relation(fields: [tagId], references: [id], onUpdate: Cascade)
+  product Product @relation(fields: [productId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@unique([tagId, productId])
+  @@map("products_tags")
+}
+
+model Attachment {
+  id        String  @id @unique @default(uuid())
+  fileName  String  @unique @map("file_name")
+  url       String
+  productId String? @unique @map("product_id")
+
+  product Product? @relation(fields: [productId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@map("attachments")
+}

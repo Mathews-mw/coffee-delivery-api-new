@@ -1,4 +1,3 @@
-import { IUploader } from '../../../storage/IUploader';
 import { failure, Outcome, success } from '@/core/outcome';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Product } from '@/domains/main/resources/entities/product';
@@ -7,8 +6,11 @@ import { ProductTag } from '@/domains/main/resources/entities/product-tag';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
 import { ProductAlreadyExistsError } from './errors/product-already-exists-error';
 import { ProductTagList } from '@/domains/main/resources/entities/product-tag-list';
-import { NegativaValueNotAllowedError } from './errors/negative-value-not-allowed-error';
 import { IProductTagRepository } from '../../tag/repositories/IProductTagRepository';
+import { NegativaValueNotAllowedError } from './errors/negative-value-not-allowed-error';
+import { ProductAttachment } from '@/domains/main/resources/entities/product-attachment';
+import { IProductAttachmentRepository } from '../repositories/IProductAttachmentRepository';
+import { ProductAttachmentList } from '@/domains/main/resources/entities/product-attachment-list';
 
 interface IUseCaseRequest {
 	productId: string;
@@ -17,12 +19,7 @@ interface IUseCaseRequest {
 	description?: string;
 	available?: boolean;
 	tagsId?: Array<string>;
-	imageFile?: {
-		fileName: string;
-		fileSize: number;
-		contentType: string;
-		body: Buffer;
-	};
+	attachmentId?: string;
 }
 
 type IUseCaseResponse = Outcome<
@@ -34,12 +31,12 @@ type IUseCaseResponse = Outcome<
 
 export class EditProductUseCase {
 	constructor(
-		private uploader: IUploader,
 		private productsRepository: IProductRepository,
-		private productsTagsRepository: IProductTagRepository
+		private productsTagsRepository: IProductTagRepository,
+		private productAttachmentRepository: IProductAttachmentRepository
 	) {}
 
-	async execute({ productId, name, price, description, available, tagsId, imageFile }: IUseCaseRequest): Promise<IUseCaseResponse> {
+	async execute({ productId, name, price, description, available, tagsId, attachmentId }: IUseCaseRequest): Promise<IUseCaseResponse> {
 		const product = await this.productsRepository.findById(productId);
 
 		if (!product) {
@@ -75,16 +72,21 @@ export class EditProductUseCase {
 			productTagsList.update(productTags);
 		}
 
-		if (imageFile) {
-			await this.uploader.delete(product.imageUrl);
+		if (attachmentId) {
+			const currentProductAttachment = await this.productAttachmentRepository.findByProductId(productId);
 
-			const { url } = await this.uploader.upload({
-				fileName: imageFile.fileName,
-				fileType: imageFile.contentType,
-				body: imageFile.body,
-			});
+			if (currentProductAttachment) {
+				const productAttachmentList = new ProductAttachmentList([currentProductAttachment]);
 
-			product.imageUrl = url;
+				const productAttachment = ProductAttachment.create({
+					productId: product.id,
+					attachmentId: new UniqueEntityId(attachmentId),
+				});
+
+				productAttachmentList.update([productAttachment]);
+
+				product.image = productAttachmentList;
+			}
 		}
 
 		product.name = name ?? product.name;

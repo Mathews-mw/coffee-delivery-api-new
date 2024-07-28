@@ -9,6 +9,12 @@ const envSchema = z.object({
 	HOST: z.string(),
 	DATABASE_URL: z.string(),
 	COOKIE_NAME: z.string(),
+	CLOUDFLARE_ACCOUNT_ID: z.string(),
+	CLOUDFLARE_TOKEN_VALUE: z.string(),
+	CLOUDFLARE_ACCESS_KEY_ID: z.string(),
+	CLOUDFLARE_SECRET_ACCESS_KEY: z.string(),
+	CLOUDFLARE_ENDPOINTS: z.string(),
+	CLOUDFLARE_BUCKET_NAME: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);

@@ -5,6 +5,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { env } from '@/infra/env';
 import { AuthenticateUserUseCase } from '@/domains/main/application/modules/auth/authenticate-user-use-case';
 import { RegisterUserSessionUseCase } from '@/domains/main/application/modules/auth/register-user-session-use-case';
+import { UserPresenter } from '../../presenters/account/user-presenter';
 
 export async function authenticateUserController(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
 	const registerBodySchema = z.object({
@@ -45,12 +46,13 @@ export async function authenticateUserController(request: FastifyRequest, reply:
 				path: '/',
 				maxAge: 7 * 86400, // 7 days in seconds
 				httpOnly: true,
+				secure: env.NODE_ENV === 'production',
 				// sameSite: 'none',
 			})
 			.status(200)
 			.send({
 				token,
-				user_id: user.id.toString(),
+				user: UserPresenter.toHTTP(user),
 			});
 	} catch (error) {
 		console.log('authenticateUserController error: ', error);

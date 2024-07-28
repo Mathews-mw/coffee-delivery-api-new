@@ -1,5 +1,8 @@
+import { inject, injectable } from 'tsyringe';
+
 import { Outcome, success } from '@/core/outcome';
 import { IUploader } from '../../../storage/IUploader';
+import containerKeys from '@/config/container-keys.config';
 import { Attachment } from '@/domains/main/resources/entities/attachment';
 import { IAttachmentRepository } from '../repositories/IAttachmentRepository';
 
@@ -19,10 +22,11 @@ type IUseCaseResponse = Outcome<
 	}
 >;
 
+@injectable()
 export class UploadProductImageUseCase {
 	constructor(
-		private uploader: IUploader,
-		private attachmentRepository: IAttachmentRepository
+		@inject(containerKeys.storage.r2_storage) private uploader: IUploader,
+		@inject(containerKeys.repositories.attachments_repository) private attachmentRepository: IAttachmentRepository
 	) {}
 
 	async execute({ imageFile }: IUseCaseRequest): Promise<IUseCaseResponse> {

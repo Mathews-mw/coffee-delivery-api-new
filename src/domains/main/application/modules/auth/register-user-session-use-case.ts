@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { inject, injectable } from 'tsyringe';
 
 import authConfig from '@/config/auth-config';
-import { containersKeysMap } from '@/shared/containers';
+import containerKeys from '@/config/container-keys.config';
 import { failure, Outcome, success } from '@/core/outcome';
 import { Session } from '@/domains/main/resources/entities/session';
 import { IUserRepository } from '../accounts/repositories/IUserRepository';
@@ -24,8 +24,8 @@ type IResponse = Outcome<
 @injectable()
 export class RegisterUserSessionUseCase {
 	constructor(
-		@inject(containersKeysMap.users_repository) private usersRepository: IUserRepository,
-		@inject(containersKeysMap.sessions_repository) private sessionsRepository: ISessionRepository
+		@inject(containerKeys.repositories.users_repository) private usersRepository: IUserRepository,
+		@inject(containerKeys.repositories.sessions_repository) private sessionsRepository: ISessionRepository
 	) {}
 
 	async execute({ userId, sessionToken }: IRequest): Promise<IResponse> {

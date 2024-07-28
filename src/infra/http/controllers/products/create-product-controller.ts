@@ -6,20 +6,23 @@ import { CreateProductUseCase } from '@/domains/main/application/modules/product
 export async function createProductController(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
 	const registerBodySchema = z.object({
 		name: z.string(),
-		email: z.string().email(),
-		password: z.string().optional(),
+		price: z.coerce.number(),
+		description: z.string(),
+		tags_id: z.array(z.string()),
+		attachment_id: z.string(),
 	});
 
-	const { name, email, password, role } = registerBodySchema.parse(request.body);
+	const { name, price, description, tags_id, attachment_id } = registerBodySchema.parse(request.body);
 
 	try {
 		const service = container.resolve(CreateProductUseCase);
 
 		const result = await service.execute({
 			name,
-			email,
-			password,
-			role,
+			price,
+			description,
+			tagsId: tags_id,
+			attachmentId: attachment_id,
 		});
 
 		if (result.isFalse()) {
@@ -30,6 +33,6 @@ export async function createProductController(request: FastifyRequest, reply: Fa
 	} catch (error) {
 		console.log('createProductController error: ', error);
 
-		return reply.status(400).send({ message: 'Erro ao tentar cadastrar usuário.' });
+		return reply.status(400).send({ message: 'Erro ao tentar cadastrar produto.' });
 	}
 }

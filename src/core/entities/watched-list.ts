@@ -87,7 +87,9 @@ export abstract class WatchedList<T> {
 
 	public update(items: T[]): void {
 		const newItems = items.filter((a) => {
-			return !this.getItems().some((b) => this.compareItems(a, b));
+			return !this.getItems().some((b) => {
+				return this.compareItems(a, b);
+			});
 		});
 
 		const removedItems = this.getItems().filter((a) => {

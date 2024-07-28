@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { inject, injectable } from 'tsyringe';
 
-import { containersKeysMap } from '@/shared/containers';
+import containerKeys from '@/config/container-keys.config';
 import { failure, Outcome, success } from '@/core/outcome';
 import { IUserRepository } from '../repositories/IUserRepository';
 import { User, UserRoleType } from '@/domains/main/resources/entities/user';
@@ -23,9 +23,10 @@ type IUseCaseResponse = Outcome<
 
 @injectable()
 export class CreateUserUseCase {
-	constructor(@inject(containersKeysMap.users_repository) private usersRepository: IUserRepository) {}
+	constructor(@inject(containerKeys.repositories.users_repository) private usersRepository: IUserRepository) {}
 
 	async execute({ name, email, password, role }: IUseCaseRequest): Promise<IUseCaseResponse> {
+		// await new Promise((resolve) => setTimeout(resolve, 3000));
 		const userByEmail = await this.usersRepository.findByEmail(email);
 
 		if (userByEmail) {

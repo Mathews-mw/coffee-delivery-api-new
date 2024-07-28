@@ -1,10 +1,13 @@
 import 'reflect-metadata';
+import '@/shared/containers/index'; // DI Containers
+
 import fastify from 'fastify';
 import { ZodError } from 'zod';
 import cors from '@fastify/cors';
 import multer from 'fastify-multer';
 import fastifyJwt from '@fastify/jwt';
 import { readFileSync } from 'node:fs';
+import formBody from '@fastify/formbody';
 import fastifyCookie from '@fastify/cookie';
 
 import { env } from './env';
@@ -19,7 +22,7 @@ app.register(fastifyCookie);
 app.register(cors, {
 	credentials: true,
 	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
-	origin: ['*'],
+	origin: ['http://localhost:3000'],
 });
 
 app.register(fastifyJwt, {
@@ -37,6 +40,7 @@ app.register(fastifyJwt, {
 	},
 });
 
+app.register(formBody);
 app.register(multer.contentParser);
 
 app.register(routes, { prefix: '/api' });

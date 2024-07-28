@@ -10,7 +10,10 @@ export async function createUserController(request: FastifyRequest, reply: Fasti
 		name: z.string(),
 		email: z.string().email(),
 		password: z.string().optional(),
-		role: z.enum([...userRolesTypes]).optional(),
+		role: z
+			.enum([...userRolesTypes])
+			.optional()
+			.default('CUSTOMER'),
 	});
 
 	const { name, email, password, role } = registerBodySchema.parse(request.body);
@@ -26,7 +29,7 @@ export async function createUserController(request: FastifyRequest, reply: Fasti
 		});
 
 		if (result.isFalse()) {
-			return reply.status(400).send({ message: result.value.message });
+			return reply.status(400).send({ status: 400, statusText: 'Bad Request', message: result.value.message });
 		}
 
 		return reply.status(201).send(result.value.user);
