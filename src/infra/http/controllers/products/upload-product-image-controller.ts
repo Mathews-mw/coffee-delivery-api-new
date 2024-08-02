@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { container } from 'tsyringe';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UploadProductImageUseCase } from '@/domains/main/application/modules/products/use-cases/upload-product-image-use-case';
+import { AttachmentPresenter } from '../../presenters/attachment/attachment-presenter';
 
 export async function uploadProductImageController(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
 	const MAX_FILE_SIZE = 15000000; // 15mb
@@ -24,7 +25,7 @@ export async function uploadProductImageController(request: FastifyRequest, repl
 	try {
 		const uploadServiceNoteAttachmentUseCase = container.resolve(UploadProductImageUseCase);
 
-		await uploadServiceNoteAttachmentUseCase.execute({
+		const result = await uploadServiceNoteAttachmentUseCase.execute({
 			imageFile: {
 				fileName: data.originalname,
 				fileSize: data.size,
@@ -33,7 +34,11 @@ export async function uploadProductImageController(request: FastifyRequest, repl
 			},
 		});
 
-		return reply.status(201).send();
+		if (result.isFalse()) {
+			return reply.status(400).send();
+		}
+
+		return reply.status(201).send(AttachmentPresenter.toHTTP(result.value.attachment));
 	} catch (error) {
 		console.log('uploadProductImageController error: ', error);
 

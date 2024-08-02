@@ -1,7 +1,10 @@
+import { inject, injectable } from 'tsyringe';
+
 import { Outcome, success } from '@/core/outcome';
-import { Product } from '@/domains/main/resources/entities/product';
+import containerKeysConfig from '@/config/container-keys.config';
 import { IProductRepository } from '../repositories/IProductRepository';
 import { IPaginationResponse } from '@/core/interfaces/paginating-interfaces';
+import { ProductDetails } from '@/domains/main/resources/entities/value-objects/product-details';
 
 interface IRequest {
 	page: number;
@@ -13,12 +16,13 @@ type IResponse = Outcome<
 	null,
 	{
 		pagination: IPaginationResponse;
-		products: Product[];
+		products: ProductDetails[];
 	}
 >;
 
+@injectable()
 export class ListingProductsUseCase {
-	constructor(private productsRepository: IProductRepository) {}
+	constructor(@inject(containerKeysConfig.repositories.products_repository) private productsRepository: IProductRepository) {}
 
 	async execute({ page, perPage, search }: IRequest): Promise<IResponse> {
 		const { pagination, products } = await this.productsRepository.findAll({ page, perPage, search });

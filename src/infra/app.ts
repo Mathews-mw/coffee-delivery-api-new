@@ -47,6 +47,7 @@ app.register(routes, { prefix: '/api' });
 
 app.setErrorHandler((error, _, reply) => {
 	if (error instanceof ZodError) {
+		console.log('zod errors: ', error);
 		return reply.status(400).send({ message: 'Erro de validação.', issues: error.format() });
 	}
 

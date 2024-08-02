@@ -5,6 +5,8 @@ import { prisma } from '../prisma';
 import containerKeysConfig from '@/config/container-keys.config';
 import { Product } from '@/domains/main/resources/entities/product';
 import { PrismaProductMapper } from './mappers/prisma-product-mapper';
+import { PrismaProductDetailsMapper } from './mappers/prisma-product-details-mapper';
+import { ProductDetails } from '@/domains/main/resources/entities/value-objects/product-details';
 import { IProductTagRepository } from '@/domains/main/application/modules/tag/repositories/IProductTagRepository';
 import { IProductAttachmentRepository } from '@/domains/main/application/modules/products/repositories/IProductAttachmentRepository';
 import { IProductRepository, IProductResponse, IQuerySearch } from '@/domains/main/application/modules/products/repositories/IProductRepository';
@@ -73,6 +75,13 @@ export class PrismaProductsRepository implements IProductRepository {
 		const [prismaProducts, count] = await prisma.$transaction([
 			prisma.product.findMany({
 				where: query.where,
+				include: {
+					productsTags: {
+						include: {
+							tag: true,
+						},
+					},
+				},
 				orderBy: {
 					name: 'asc',
 				},
@@ -93,7 +102,7 @@ export class PrismaProductsRepository implements IProductRepository {
 			totalOccurrences: count,
 		};
 
-		const products = prismaProducts.map(PrismaProductMapper.toDomain);
+		const products = prismaProducts.map(PrismaProductDetailsMapper.toDomain);
 
 		return {
 			pagination,
@@ -127,5 +136,26 @@ export class PrismaProductsRepository implements IProductRepository {
 		}
 
 		return PrismaProductMapper.toDomain(product);
+	}
+
+	async findProductDetail(id: string): Promise<ProductDetails | null> {
+		const product = await prisma.product.findUnique({
+			where: {
+				id,
+			},
+			include: {
+				productsTags: {
+					include: {
+						tag: true,
+					},
+				},
+			},
+		});
+
+		if (!product) {
+			return null;
+		}
+
+		return PrismaProductDetailsMapper.toDomain(product);
 	}
 }
