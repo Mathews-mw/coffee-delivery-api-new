@@ -6,7 +6,7 @@ import { PaginationPresenter } from '../../presenters/pagination-presenter';
 import { ProductDetailsPresenter } from '../../presenters/product/product-details-presenter';
 import { ListingProductsUseCase } from '@/domains/main/application/modules/products/use-cases/listing-products-use-case';
 
-export async function ListingProductsController(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
+export async function listingProductsController(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
 	const registerBodySchema = z.object({
 		page: z.optional(z.coerce.number()).default(1),
 		per_page: z.optional(z.coerce.number()).default(10),
@@ -35,7 +35,7 @@ export async function ListingProductsController(request: FastifyRequest, reply: 
 
 		// await new Promise((resolve) => setTimeout(resolve, 3000));
 
-		return reply.status(201).send(response);
+		return reply.status(200).send(response);
 	} catch (error) {
 		console.log('ListingProductsController error: ', error);
 

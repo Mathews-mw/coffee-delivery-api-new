@@ -1,4 +1,7 @@
+import { inject, injectable } from 'tsyringe';
+
 import { failure, Outcome, success } from '@/core/outcome';
+import containerKeysConfig from '@/config/container-keys.config';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Product } from '@/domains/main/resources/entities/product';
 import { IProductRepository } from '../repositories/IProductRepository';
@@ -29,11 +32,12 @@ type IUseCaseResponse = Outcome<
 	}
 >;
 
+@injectable()
 export class EditProductUseCase {
 	constructor(
-		private productsRepository: IProductRepository,
-		private productsTagsRepository: IProductTagRepository,
-		private productAttachmentRepository: IProductAttachmentRepository
+		@inject(containerKeysConfig.repositories.products_repository) private productsRepository: IProductRepository,
+		@inject(containerKeysConfig.repositories.products_tags_repository) private productsTagsRepository: IProductTagRepository,
+		@inject(containerKeysConfig.repositories.products_attachments_repository) private productAttachmentRepository: IProductAttachmentRepository
 	) {}
 
 	async execute({ productId, name, price, description, available, tagsId, attachmentId }: IUseCaseRequest): Promise<IUseCaseResponse> {
@@ -41,14 +45,6 @@ export class EditProductUseCase {
 
 		if (!product) {
 			return failure(new ResourceNotFoundError());
-		}
-
-		if (name) {
-			const productByName = await this.productsRepository.findById(name);
-
-			if (productByName) {
-				return failure(new ProductAlreadyExistsError(name));
-			}
 		}
 
 		if (price) {

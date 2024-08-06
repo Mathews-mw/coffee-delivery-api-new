@@ -41,10 +41,18 @@ export class PrismaProductsRepository implements IProductRepository {
 			},
 		});
 
-		await this.productsAttachmentsRepository.create(product.image.getItems()[0]);
-		await this.productsAttachmentsRepository.delete(product.image.getRemovedItems()[0]);
+		const toCreateNewAttachments = product.image.getNewItems();
+		const toDeleteAttachments = product.image.getItems();
 
-		await this.productsTagsRepository.createMany(product.tags.getItems());
+		if (toCreateNewAttachments.length > 0) {
+			await this.productsAttachmentsRepository.create(product.image.getNewItems()[0]);
+		}
+
+		if (toDeleteAttachments.length > 0) {
+			await this.productsAttachmentsRepository.delete(toDeleteAttachments[0]);
+		}
+
+		await this.productsTagsRepository.createMany(product.tags.getNewItems());
 		await this.productsTagsRepository.deleteMany(product.tags.getRemovedItems());
 
 		return product;
